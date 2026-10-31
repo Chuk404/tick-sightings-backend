@@ -2,13 +2,13 @@ CREATE DATABASE IF NOT EXISTS elanco;
 USE elanco;
 
 
-CREATE TABLE species ( 
+CREATE TABLE IF NOT EXISTS species ( 
   name VARCHAR(100) NOT NULL,
   latin_name VARCHAR(150) NOT NULL,
   CONSTRAINT pk_name PRIMARY KEY(name)
   );
   
-CREATE TABLE sightings ( 
+CREATE TABLE IF NOT EXISTS sightings ( 
   id VARCHAR(50) NOT NULL,
   sighted_at DATETIME NOT NULL,
   location VARCHAR(100) NOT NULL,

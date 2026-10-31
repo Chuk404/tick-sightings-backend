@@ -30,7 +30,9 @@ fill in: connection name and press ok
    Leave `DB_NAME` as `elanco`. Then copy this `.env` file into **both** the
    `data_cleaner` and `API query` folders.
 
-3. **Install the dependencies** (one per app), from the project's main folder:
+3. 3. **Install the dependencies.** In File Explorer, right-click the project
+   folder (the one that contains `README.md`) and choose **Copy as path**.
+   In your terminal, type `cd ` and paste the path, then press Enter. Then run:
    ```
    py -m pip install -r data_cleaner/requirements.txt
    py -m pip install -r "API query/requirements.txt"
@@ -47,12 +49,13 @@ fill in: connection name and press ok
    Elanco's API replies "rate limit exceeded", the script waits and retries.
 
 
-2. **Start the API:**
-      ```
+2. **Start the API** (from the main folder):
+   ```
    cd "API query"
    py app.py
    ```
-   It runs at http://127.0.0.1:5000
+   The terminal will show the address, normally http://127.0.0.1:5000. Open
+   it in your browser, using the example links below.
 
 
 ## Endpoints
@@ -77,8 +80,6 @@ Examples:
 
 The filters `from`, `to`, `location` and `species` work on `/summary`,
 `/trends` and `/seasonal` as well.
-
-The filters `from`, `to`, `location` and `species` work on `/summary`, `/trends` and `/seasonal` as well.
 
 ## Notes
 - Flask's built-in server is for development only. A production setup would use
