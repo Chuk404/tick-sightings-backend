@@ -64,13 +64,16 @@ fill in: connection name and press ok
 |---|---|---|
 | `/sightings` | Search and filter sightings. Returns the matching sightings plus the total number of matches. | `from`, `to`, `location`, `species`, `limit` (default 100, max 1000), `offset` (default 0) |
 | `/sightings/<id>` | One sighting by its ID. Returns an error message if the ID doesn't exist. | none |
-| `/summary` | Number of sightings per location, or per species. | `group_by=location` (default) or `group_by=species`, plus the filters below |
+| `/summary` | Number of sightings per location, per species, or per UK region. | `group_by=location` (default), `group_by=species` or `group_by=region`, plus the filters below |
 | `/trends` | Number of sightings over time, by month or by week. | `period=month` (default) or `period=week`, plus the filters below |
 | `/seasonal` | Average number of sightings in each calendar month (or week of the year) across all the years in the data. | `period=month` (default) or `period=week`, plus the filters below |
 
+The filters `from`, `to`, `location` and `species` work on `/summary`,
+`/trends` and `/seasonal` as well.
 
 Examples:
 
+- http://127.0.0.1:5000/summary?group_by=region
 - http://127.0.0.1:5000/sightings?location=London&limit=5
 - http://127.0.0.1:5000/sightings?from=2020-01-01&to=2020-12-31&limit=3
 - http://127.0.0.1:5000/sightings/02WNholuSg6ndCk4c1dA

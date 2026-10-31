@@ -11,6 +11,24 @@ load_dotenv(env_path)
 class GroupBy(Enum):
     LOCATION = "location"
     SPECIES = "species"
+    REGION = "region"
+
+REGION_OF = {
+    "London": "London",
+    "Manchester": "North West",
+    "Liverpool": "North West",
+    "Leeds": "Yorkshire and the Humber",
+    "Sheffield": "Yorkshire and the Humber",
+    "Newcastle": "North East",
+    "Birmingham": "West Midlands",
+    "Leicester": "East Midlands",
+    "Nottingham": "East Midlands",
+    "Bristol": "South West",
+    "Southampton": "South East",
+    "Glasgow": "Scotland",
+    "Edinburgh": "Scotland",
+    "Cardiff": "Wales",
+}
 
 class Period(Enum):
     WEEK = "week"
@@ -106,13 +124,27 @@ def get_sighting_by_id(sighting_id):
 
 def get_summary(f, group_by):
     where, params = build_where(f)
-    col = group_by.value
+
+    if group_by == GroupBy.REGION:
+        rows = run_query(
+            f"SELECT location AS name, COUNT(*) AS sightings FROM sightings{where} "
+            f"GROUP BY location",
+            params,
+        )
+        totals = {}
+        for r in rows:
+            region = REGION_OF.get(r["name"], "Other")   # unknown cities still get counted
+            totals[region] = totals.get(region, 0) + r["sightings"]
+        return [{"name": k, "sightings": v}
+                for k, v in sorted(totals.items(), key=lambda kv: kv[1], reverse=True)]
+
+    col = group_by.value          # safe: the Enum only allows known column names
     return run_query(
-        f"SELECT {col} AS name, COUNT(*) AS sightings FROM sightings {where}"
+        f"SELECT {col} AS name, COUNT(*) AS sightings FROM sightings{where} "
         f"GROUP BY {col} ORDER BY sightings DESC",
         params,
     )
-
+    
 def get_trends(f, period):
     where, params = build_where(f)
     return run_query(
