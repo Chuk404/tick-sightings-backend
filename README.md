@@ -13,18 +13,22 @@ The design write-up is in `docs/Tick Design.docx`.
 ## Requirements
 
 - Python 3.10 or newer
-- MySQL 8
+- MySQL 8 (https://dev.mysql.com/downloads/installer/)
+**Connect MySQL Workbench to your MySQL server.**
+**Go to MYSQL Workbench to your MYSQL server.** click the **+** next to "MYSQL Connections" and
+fill in: connection name and press ok 
 
 
 ## Setup
 
 1. **Create the database and tables.** Open `data_cleaner/sighting_species.sql`
    in MySQL Workbench and run it (the lightning-bolt button). It creates a
-   database called `elanco` with the `species` and `sightings` tables.
+   database called `elanco` with the `species` and `sightings` tables. and refresh your schemas
 
-2. **Add your database settings.** Copy `.env.example` to a file named `.env`
-   inside **both** the `data_cleaner` and `API query` folders, then fill in your
-   own MySQL details. Set `DB_NAME` to `elanco`.
+2. 2. **Add your database settings.** Rename `.env.example` to `.env` and fill in
+   your own MySQL details (the username and password you use in Workbench).
+   Leave `DB_NAME` as `elanco`. Then copy this `.env` file into **both** the
+   `data_cleaner` and `API query` folders.
 
 3. **Install the dependencies** (one per app), from the project's main folder:
    ```
