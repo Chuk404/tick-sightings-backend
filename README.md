@@ -88,3 +88,56 @@ The filters `from`, `to`, `location` and `species` work on `/summary`,
 - Flask's built-in server is for development only. A production setup would use
   a proper web server.
 - Credentials live in `.env`, which is not committed.
+
+## Running the data_cleaner on a schedule
+
+The data_cleaner is designed to run once a day. Sightings arrive in batches and
+Elanco's API is rate-limited, so running it more often adds little. Running it
+again is always safe: sightings are updated by ID, so nothing is duplicated.
+
+It doesn't schedule itself. Use your computer's scheduler to run it:
+
+- **Windows** (Task Scheduler). This creates a task that runs every day at 3am
+  (replace the path with where you saved the project):
+  ```
+  schtasks /Create /SC DAILY /ST 03:00 /TN "TickDataCleaner" /TR "py \"C:\path\to\data_cleaner\Scanning.py\""
+  ```
+- **Mac or Linux** (cron). Add this line with `crontab -e`:
+  ```
+  0 3 * * * python3 /path/to/data_cleaner/Scanning.py
+  ```
+
+If a run fails (for example, Elanco's API is down), it logs the error and stops
+without changing the database, and the API keeps serving the last good data.
+The next scheduled run tries again.
+
+## Project outline and design choices
+
+**Outline.** Two applications share a MySQL database. The `data_cleaner`
+fetches Elanco's tick sighting data, cleans it and loads it. A separate Flask
+API reads from the database to search, filter and summarise the sightings.
+The full write-up, with screenshots, is in `Tick Design.docx`.
+
+**Choices**
+- **Two apps, one database.** If Elanco's API goes down or rate-limits me, only
+  the data_cleaner fails and the API keeps serving the last good data.
+- **Python, Flask and MySQL.** The data is small and relational, and a
+  lightweight framework left the time for data handling.
+- **Schema in 3NF.** Sightings are keyed on the API's ID; species (with its
+  Latin name) is its own table. Indexes on date and on location plus date
+  support the filters.
+- **Duplicates and missing data.** The ID is the identity of a sighting, so
+  re-running never duplicates. Records missing a required field or with an
+  invalid date are rejected and counted. I don't fill in default values,
+  because a made-up location would distort the counts.
+- **Failure handling.** Failed or malformed responses are retried with a
+  growing delay, and a rate limit makes it wait a minute. After four attempts it
+  stops cleanly.
+- **Safe API.** Filters live in one class, user input only goes in as query
+  parameters, and fixed choices (`group_by`, `period`) are Enums.
+- **Regions.** The data only has cities, so a fixed lookup in the code groups
+  them into UK regions.
+
+**With more time:** run the data_cleaner on a scheduler and check the stats
+endpoint first, move regions into a `locations` table, add a fallback duplicate
+rule, validate cities against the database, and add the AI/ML insights.
