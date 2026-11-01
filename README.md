@@ -141,3 +141,7 @@ The full write-up, with screenshots, is in `Tick Design.docx`.
 **With more time:** run the data_cleaner on a scheduler and check the stats
 endpoint first, move regions into a `locations` table, add a fallback duplicate
 rule, validate cities against the database, and add the AI/ML insights.
+
+## Use of AI
+
+I used AI tools for code suggestions and debugging help. The design decisions, the data checks and the testing were mine.
